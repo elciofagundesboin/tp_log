@@ -1,0 +1,6 @@
+BEGIN;
+CREATE TABLE log (
+    A INTEGER,
+    B INTEGER
+);
+COMMIT;
