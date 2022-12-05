@@ -20,6 +20,8 @@
         echo $data->INITIAL->B[1]."<br>";
         echo "<br><br>";
         print_r($data);
+        echo "<br><br>";
+        var_dump($data);
     ?>
 </body>
 </html>
