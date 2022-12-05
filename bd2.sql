@@ -1,5 +1,6 @@
 BEGIN;
 CREATE TABLE log (
+    id INTEGER,
     A INTEGER,
     B INTEGER
 );
