@@ -11,7 +11,6 @@
         <form action="importar-metadata.php" method="POST" enctype="multipart/form-data">
             <input type="file" id="file" name="file" accept=".json">
             <button class="btn btn-success" type="submit" id="file">Enviar</button>
-            <a href="index.php">Cancelar</a>
         </form>
     </div>
     <hr>
