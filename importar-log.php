@@ -56,10 +56,7 @@
             foreach($pendings as $transaction){
                 // $transaction é minha transação, exemplo 'T2'
                 $needs_redo = FALSE;
-                $aux = "<commit ".$transaction.">";
                 for($i = $rows - 1; $i >= 0; $i--){
-                    echo $log[$i];
-                    echo $aux;
                     if(str_contains($log[$i], "commit ".$transaction)){
                         // encontrou commit para a transacao
                         $needs_redo = TRUE;
@@ -74,9 +71,33 @@
                     echo "Transação ".$transaction." NÃO Precisa fazer REDO<br><br>";
                 }
             }
-
         }else{ // se não encontrou checkpoint
             // percorre o arquivo todo verificando quais transações iniciaram e não finalizaram, e realiza o redo
+            $i = 0;
+            foreach($log as $line){
+                // verifica se é um início de transação
+                if(str_contains($line, "start")){
+                    // verifica qual transação iniciou
+                    $transaction = transaction_line_start($line);
+                    $needs_redo = FALSE;
+                    foreach($log as $line2){
+                        if(str_contains($line2, "commit ".$transaction)){
+                            // se encontrou o commit
+                            $needs_redo = TRUE;
+                            break;
+                        }
+                    }
+                    if($needs_redo){
+                        echo "<b>Transação ".$transaction." Precisa fazer REDO</b><br>";
+                        // chama a função redo
+                        redo($log, $transaction, $conn);
+                        echo "<br>";
+                    }else{
+                        echo "Transação ".$transaction." NÃO Precisa fazer REDO<br><br>";
+                    }
+                }
+                $i++;
+            }
         }
 
         // FIM DO REDO

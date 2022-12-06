@@ -8,6 +8,22 @@ function ckpt_pending_transactions($line){
     return $transactions;
 }
 
+// função que recebe a linha, e retorna a transação que iniciou
+function transaction_line_start($line){
+    $remove = array("<", ">", "start", "START", " ");
+    $values = str_replace($remove, "", $line);
+    $values = preg_replace('/[^a-z0-9,]/i', '', $values);
+    return $values;
+}
+
+// função que recebe a linha, e retorna a transação que recebeu o commit
+function transaction_line_commit($line){
+    $remove = array("<", ">", "commit", "COMMIT", " ");
+    $values = str_replace($remove, "", $line);
+    $values = preg_replace('/[^a-z0-9,]/i', '', $values);
+    return $values;
+}
+
 // função que 'limpa' a linha de alterações e retorna um array com os valores da linha, sendo
 // [0] = Transação
 // [1] = ID
@@ -35,15 +51,15 @@ function redo($log, $transaction, $conn){
                 // se tiver alguma alteração (linha começa com o nome da transação)
                 if($line_array[0] == $transaction){
                     // precisa verificar o valor
-                    $query = "SELECT ".$line_array[2]." FROM log WHERE id = ".$line_array[1].";";
+                    $query = "SELECT ".$line_array[2]." AS COLUNA FROM log WHERE id = ".$line_array[1].";";
                     $result = mysqli_query($conn, $query);
                     $row = mysqli_fetch_assoc($result);
                     // se o valor do Banco for diferente do Novo Valor da transação, altera
-                    if($row['A'] != $line_array[4]){
+                    if($row['COLUNA'] != $line_array[4]){
                         $query = "UPDATE log SET ".$line_array[2]." = ".$line_array[4]." WHERE id = ".$line_array[1].";";
                         $result = mysqli_query($conn, $query);
                         // precisa retornar o valor que foi alterado
-                        echo "ID <b>".$line_array[1]."</b>, valor da coluna <b>".$line_array[2]."</b> alterado de <b>".$row['A']."</b> para <b>".$line_array[4]."</b><br>";
+                        echo "ID <b>".$line_array[1]."</b>, valor da coluna <b>".$line_array[2]."</b> alterado de <b>".$row['COLUNA']."</b> para <b>".$line_array[4]."</b><br>";
                     }
                 }
                 // se encontrou o commit
