@@ -60,6 +60,8 @@ function redo($log, $transaction, $conn){
                         $result = mysqli_query($conn, $query);
                         // precisa retornar o valor que foi alterado
                         echo "ID <b>".$line_array[1]."</b>, valor da coluna <b>".$line_array[2]."</b> alterado de <b>".$row['COLUNA']."</b> para <b>".$line_array[4]."</b><br>";
+                    }else{
+                        echo "Nenhum valor alterado<br>";
                     }
                 }
                 // se encontrou o commit

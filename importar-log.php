@@ -1,17 +1,50 @@
+<?php
+    // referencia o arquivo de conexão com o banco
+    require_once('conn.php');
+    // referencia o arquivo de funcoes
+    require_once('funcoes.php');
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title>BD2 - Log</title>
+    <style>
+        th, td{
+            border: 1px solid black;
+        }
+        th, td{
+            width: 50px;
+        }
+    </style>
 </head>
 <body>
+    <h3>Tabela Inicial:</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>A</th>
+                <th>B</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+                $query = "SELECT * FROM log WHERE 1;";	
+                $result = mysqli_query($conn, $query);
+                while($row = mysqli_fetch_assoc($result)){
+                    echo "<tr><td>".$row['id']."</td><td>".$row['A']."</td><td>".$row['B']."</td></tr>";
+                }
+            ?>
+            <tr>
+                <td>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
     <?php
-        // referencia o arquivo de conexão com o banco
-        require_once('conn.php');
-        // referencia o arquivo de funcoes
-        require_once('funcoes.php');
-
         // pega os dados do arquivo de log passado pelo formulário
         $log = file($_FILES["file"]["tmp_name"]);
         // pega o nome do arquivo de log passado pelo formulário
@@ -65,12 +98,12 @@
                     }
                 }
                 if($needs_redo){
-                    echo "<b>Transação ".$transaction." Precisa fazer REDO</b><br>";
+                    echo "<b>Transação ".$transaction." realizou REDO</b><br>";
                     // chama a função redo
                     redo($log, $transaction, $conn);
                     echo "<br>";
                 }else{
-                    echo "Transação ".$transaction." NÃO Precisa fazer REDO<br><br>";
+                    echo "Transação ".$transaction." não realizou REDO<br><br>";
                 }
             }
             // VERIFICA AS TRANSAÇÕES APÓS O CHECKPOINT
@@ -88,12 +121,12 @@
                         }
                     }
                     if($needs_redo){
-                        echo "<b>Transação ".$transaction." Precisa fazer REDO</b><br>";
+                        echo "<b>Transação ".$transaction." realizou REDO</b><br>";
                         // chama a função redo
                         redo($log, $transaction, $conn);
                         echo "<br>";
                     }else{
-                        echo "Transação ".$transaction." NÃO Precisa fazer REDO<br><br>";
+                        echo "Transação ".$transaction." não realizou REDO<br><br>";
                     }
                 }
             }
@@ -114,18 +147,42 @@
                         }
                     }
                     if($needs_redo){
-                        echo "<b>Transação ".$transaction." Precisa fazer REDO</b><br>";
+                        echo "<b>Transação ".$transaction." realizou REDO</b><br>";
                         // chama a função redo
                         redo($log, $transaction, $conn);
                         echo "<br>";
                     }else{
-                        echo "Transação ".$transaction." NÃO Precisa fazer REDO<br><br>";
+                        echo "Transação ".$transaction." não realizou REDO<br><br>";
                     }
                 }
             }
         }
         // FIM DO REDO
     ?>
+    <hr>
+    <h3>Tabela Atualizada:</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>A</th>
+                <th>B</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+                $query = "SELECT * FROM log WHERE 1;";	
+                $result = mysqli_query($conn, $query);
+                while($row = mysqli_fetch_assoc($result)){
+                    echo "<tr><td>".$row['id']."</td><td>".$row['A']."</td><td>".$row['B']."</td></tr>";
+                }
+            ?>
+            <tr>
+                <td>
+                </td>
+            </tr>
+        </tbody>
+    </table>
     <hr>
     <a href="index.php">Voltar</a>
 </body>

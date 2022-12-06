@@ -26,10 +26,11 @@
         echo "Nome do Arquivo: ".$nome."<br>";
         // apaga os dados existentes no banco ("zera" os dados do banco)
         if($result = mysqli_query($conn, "DELETE FROM log WHERE 1;")){
-            echo "Dados do Banco apagados!<br>";
+            echo "Dados do Banco apagados!";
         }else{
             echo "Falha ao apagar Dados do Banco:<br>".mysqli_error($conn);
         }
+        echo "<hr>";
         // percorre os arrays inserindo os dados na tabela do banco
         $error = FALSE;
         foreach($id as $key){
@@ -41,6 +42,7 @@
                 echo "Falha ao inserir Tupla:<br>".mysqli_error($conn);
                 $error = TRUE;
             }
+            echo "<hr>";
             $i++;
         }
         if(!$error){
