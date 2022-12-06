@@ -50,6 +50,7 @@
             echo "Falha<br>";
         }
     ?>
+    <hr>
     <a href="index.php">Voltar</a>
 </body>
 </html>
