@@ -57,7 +57,7 @@
                 // $transaction é minha transação, exemplo 'T2'
                 $needs_redo = FALSE;
                 for($i = $rows - 1; $i >= 0; $i--){
-                    if(str_contains($log[$i], "<commit ".$transaction.">")){
+                    if(str_contains($log[$i], "commit ".$transaction)){
                         // encontrou commit para a transacao
                         $needs_redo = TRUE;
                     }
