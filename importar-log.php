@@ -9,6 +9,8 @@
     <?php
         // referencia o arquivo de conexão com o banco
         require_once('conn.php');
+        // referencia o arquivo de funcoes
+        require_once('funcoes.php');
 
         // pega os dados do arquivo de log passado pelo formulário
         $log = file($_FILES["file"]["tmp_name"]);
@@ -30,13 +32,34 @@
 
         // AQUI VAI FAZER O REDO
         // percorre o log do fim ao início procurando checkpoint
+        $exists_checkpoint = FALSE;
         for($i = $rows - 1; $i >= 0; $i--){
             if(str_contains($log[$i], "CKPT")){
-                echo "Chekpoint na linha: ".$i+1;
+                echo "Chekpoint na linha: ".$i + 1 ."<br>";
                 // função que verifica e retorna as transações no Checkpoint
-                // ckpt_pending_transactions();
+                $pendings = ckpt_pending_transactions($log[$i]);
+                $exists_checkpoint = TRUE;
             }
         }
+
+        if($exists_checkpoint){ // se encontrou checkpoint
+            
+            echo "Transações pendentes: <br>";
+            foreach($pendings as $key){
+                echo $key."<br>";
+            }
+
+
+            // precisa verificar quais dessas possuem commit
+            foreach($pendings as $key){
+                // $key é minha transação, exemplo 'T2'
+                
+            }
+
+        }else{ // se não encontrou checkpoint
+
+        }
+
         // FIM DO REDO
     ?>
     <hr>
