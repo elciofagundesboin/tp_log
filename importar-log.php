@@ -30,29 +30,31 @@
         }
         echo "</textarea><hr>";
 
-        // AQUI VAI FAZER O REDO
+        // AQUI VAI FAZER AS VERIFICAÇÕES E EXECUTAR OS REDOS NECESSÁRIOS
         // percorre o log do fim ao início procurando checkpoint
         $checkpoint_exists = FALSE;
         for($i = $rows - 1; $i >= 0; $i--){
             if(str_contains($log[$i], "CKPT")){
                 // função que verifica e retorna as transações no Checkpoint
                 $pendings = ckpt_pending_transactions($log[$i]);
-                $checkpoint_line = $i + 1;
+                $checkpoint_line = $i;
                 $checkpoint_exists = TRUE;
                 break; // ao encontrar o primeiro CKPT, finaliza o laço
             }
         }
         
+        // SE EXISTIR CHECKPOINT
         if($checkpoint_exists){ // se encontrou checkpoint
-            echo "Chekpoint na linha: ".$checkpoint_line."<br>";
+            echo "Chekpoint na linha: ".$checkpoint_line + 1 ."<br>";
             echo "<hr>";
-            echo "Transações pendentes no checkpoint: <br>";
+            echo "Transações pendentes no checkpoint: ";
             foreach($pendings as $transaction){
-                echo $transaction."<br>";
+                echo $transaction." ";
             }
             echo "<hr>";
 
-            // precisa verificar quais dessas possuem commit
+            // VERIFICA AS TRANSAÇÕES ANTES DO CHEKPOINT
+            // precisa verificar quais transações pendentes possuem commit
             foreach($pendings as $transaction){
                 // $transaction é minha transação, exemplo 'T2'
                 $needs_redo = FALSE;
@@ -71,9 +73,33 @@
                     echo "Transação ".$transaction." NÃO Precisa fazer REDO<br><br>";
                 }
             }
-        }else{ // se não encontrou checkpoint
+            // VERIFICA AS TRANSAÇÕES APÓS O CHECKPOINT
+            for($i = $checkpoint_line; $i < $rows; $i++){
+                // verifica se é um início de transação
+                if(str_contains($log[$i], "start")){
+                    // verifica qual transação iniciou
+                    $transaction = transaction_line_start($log[$i]);
+                    $needs_redo = FALSE;
+                    for($j = $i + 1; $j < $rows; $j++){
+                        if(str_contains($log[$j], "commit ".$transaction)){
+                            // se encontrou o commit
+                            $needs_redo = TRUE;
+                            break;
+                        }
+                    }
+                    if($needs_redo){
+                        echo "<b>Transação ".$transaction." Precisa fazer REDO</b><br>";
+                        // chama a função redo
+                        redo($log, $transaction, $conn);
+                        echo "<br>";
+                    }else{
+                        echo "Transação ".$transaction." NÃO Precisa fazer REDO<br><br>";
+                    }
+                }
+            }
+        }else{
+            // SE NÃO ENCONTROU CHECKPOINT, PRECISA PERCORRER O ARQUIVO TODO
             // percorre o arquivo todo verificando quais transações iniciaram e não finalizaram, e realiza o redo
-            $i = 0;
             foreach($log as $line){
                 // verifica se é um início de transação
                 if(str_contains($line, "start")){
@@ -96,10 +122,8 @@
                         echo "Transação ".$transaction." NÃO Precisa fazer REDO<br><br>";
                     }
                 }
-                $i++;
             }
         }
-
         // FIM DO REDO
     ?>
     <hr>
