@@ -35,7 +35,6 @@
         foreach($id as $key){
             echo "ID = ".$id[$i]." | A=".$A[$i]." | B=".$B[$i]."<br>";
             $query = "INSERT INTO log (id, A, B) VALUES ($id[$i], $A[$i], $B[$i]);";
-            $result = mysqli_query($conn, $query);
             if($result = mysqli_query($conn, $query)){
                 echo "Tupla inserida<br>";
             }else{
