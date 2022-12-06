@@ -1,6 +1,3 @@
-<?php
-    require_once('conn.php');
-?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -9,18 +6,14 @@
 	<title>BD2 - Log</title>
 </head>
 <body>
-    <?php
-        $json = file_get_contents("metadado.json");
-        $data = json_decode($json);
-
-        $id = $data->INITIAL->id;
-        $A = $data->INITIAL->A;
-        $B = $data->INITIAL->B;
-        $i = 0;
-        foreach($id as $key){
-            echo "ID = ".$id[$i]." | A=".$A[$i]." | B=".$B[$i]."<br>";
-            $i++;
-        }
-    ?>
+    <div>
+        <h3>Importar metadata (json)</h3>
+        <form action="importar-metadata.php" method="POST" enctype="multipart/form-data">
+            <input type="file" id="file" name="file" accept=".json">
+            <button class="btn btn-success" type="submit" id="file">Enviar</button>
+            <a href="index.php">Cancelar</a>
+        </form>
+    </div>
+    <hr>
 </body>
 </html>
