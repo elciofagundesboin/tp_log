@@ -56,7 +56,10 @@
             foreach($pendings as $transaction){
                 // $transaction é minha transação, exemplo 'T2'
                 $needs_redo = FALSE;
+                $aux = "<commit ".$transaction.">";
                 for($i = $rows - 1; $i >= 0; $i--){
+                    echo $log[$i];
+                    echo $aux;
                     if(str_contains($log[$i], "commit ".$transaction)){
                         // encontrou commit para a transacao
                         $needs_redo = TRUE;
